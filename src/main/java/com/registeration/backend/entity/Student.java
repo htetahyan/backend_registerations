@@ -3,7 +3,9 @@ package com.registeration.backend.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.util.Date;
 import java.util.List;
 @Entity
 @Data
@@ -25,11 +27,13 @@ public class Student {
     private String gradeToAttend;
     private String campusTime;
     private String intakes;
-private String oldSchoolName;
-private String docUrl;
-private String city;
-private String country;
-private String phoneNumber;
-private String address;
-
+    private String oldSchoolName;
+    private String docUrl;
+    private String city;
+    private String country;
+    private String phoneNumber;
+    private String address;
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
 }

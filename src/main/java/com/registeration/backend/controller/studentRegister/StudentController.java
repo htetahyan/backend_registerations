@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,16 +17,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 @Controller
 @RestController
+@CrossOrigin(origins = "*")
 public class StudentController {
-
-    private final ExistingTeacherService existingTeacherService;
+@Autowired
+    private  ExistingTeacherService existingTeacherService;
     @Autowired
-
     private StudentService studentService;
 
-    public StudentController(ExistingTeacherService existingTeacherService) {
-        this.existingTeacherService = existingTeacherService;
-    }
+
     @PostMapping(value = "/student/register", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> registerStudent(
         @RequestPart("student_data") Student student,

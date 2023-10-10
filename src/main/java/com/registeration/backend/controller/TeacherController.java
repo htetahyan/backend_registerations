@@ -1,6 +1,7 @@
 package com.registeration.backend.controller;
 
 import com.registeration.backend.entity.Teacher;
+import com.registeration.backend.exceptions.NotFoundException;
 import com.registeration.backend.service.FileService;
 import com.registeration.backend.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class TeacherController {
 
     @PostMapping(value = "/register", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> addTeacher(
-        @RequestPart("teacher") Teacher teacher,
+        @RequestPart(value = "teacher",required = true) Teacher teacher,
         @RequestPart(value = "files", required = false) List<MultipartFile> files,
         @RequestPart(value = "idCard", required = false) MultipartFile idCard,
         @RequestPart(value = "cv", required = false) MultipartFile cv) {
@@ -32,9 +33,6 @@ public class TeacherController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("idCard and cv are required.");
             }
 
-            // You can still add more specific checks for idCard and cv if needed
-
-            // Handle the files part (which can be null)
             List<MultipartFile> multipartFiles = new ArrayList<>();
             if (files != null) {
                 multipartFiles.addAll(files);
@@ -63,7 +61,9 @@ public class TeacherController {
 
             if (teachers.isEmpty()) {
                 // Return a custom response if no teachers are found
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No teachers found.");
+                if (teachers.isEmpty()) {
+                    throw new NotFoundException("No teachers found.");
+                }
             }
 
             return new ResponseEntity<>(teachers, HttpStatus.OK);
