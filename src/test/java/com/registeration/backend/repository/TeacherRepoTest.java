@@ -15,7 +15,7 @@ class TeacherRepoTest {
 private TeacherRepo teacherRepo;
     @Test
 public void saveTeacher(){
-    Teacher teacher= Teacher.builder().address("s").DOB(123434343L).gender("male").idImg("sds").address("sdsd").fullName("john").experience(1).languagesPro("english").subjectTaught("myanmal").build();
+    Teacher teacher= Teacher.builder().address("s").DOB("123434343L").gender("male").fullName("sds").address("sdsd").fullName("john").experience("1").languagesPro("english").subjectTaught("myanmal").build();
 teacherRepo.save(teacher);
 }
 }
