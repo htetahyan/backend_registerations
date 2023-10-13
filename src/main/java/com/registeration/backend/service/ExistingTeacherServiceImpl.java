@@ -2,6 +2,7 @@ package com.registeration.backend.service;
 
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.registeration.backend.entity.Documents;
 import com.registeration.backend.entity.ExistingTeacher;
 import com.registeration.backend.repository.ExistingTeacherRepo;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,9 +35,18 @@ public class ExistingTeacherServiceImpl implements ExistingTeacherService {
     @Override
     public String uploadFile(MultipartFile multipartFile) throws IOException {
         String fileName = multipartFile.getOriginalFilename();
+
+        String fileType = multipartFile.getContentType();
+
         try {
-            File file1 = convertMultipartToFile(multipartFile);
-            s3.putObject(bucketName, fileName, file1);
+
+            InputStream inputStream = multipartFile.getInputStream();
+
+            // Upload the InputStream to S3 directly
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(fileType);
+
+            s3.putObject(bucketName, fileName, inputStream, metadata);
           return s3.getUrl(bucketName, fileName).toString();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -44,10 +55,10 @@ public class ExistingTeacherServiceImpl implements ExistingTeacherService {
 
 
     private File convertMultipartToFile(MultipartFile file) throws IOException {
-        File converted=new File(file.getOriginalFilename());
-        FileOutputStream fos=new FileOutputStream(converted);
-        fos.write(file.getBytes());
-        fos.close();
+        File converted = new File(file.getOriginalFilename());
+        try (FileOutputStream fos = new FileOutputStream(converted)) {
+            fos.write(file.getBytes());
+        }
         return converted;
     }
 
@@ -77,7 +88,7 @@ public class ExistingTeacherServiceImpl implements ExistingTeacherService {
         } catch (EmptyResultDataAccessException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Teacher with ID " + id + " not found");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while deleting the teacher");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while deleting the teacher"+e +id);
         }
     }
 

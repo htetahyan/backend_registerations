@@ -20,4 +20,15 @@ public class TeacherServiceImpl implements TeacherService{
     public List<Teacher> getAllTeacher() {
         return teacherRepo.findAll();
     }
+
+    @Override
+    public Teacher getTeacherById(Long id) {
+        return teacherRepo.findById(id)
+            .orElse(null);     }
+
+    @Override
+    public Teacher deleteTeacherById(Long id) {
+         teacherRepo.deleteById(id);
+         return null;
+    }
 }

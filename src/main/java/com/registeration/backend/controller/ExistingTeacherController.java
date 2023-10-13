@@ -19,34 +19,26 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class ExistingTeacherController {
-
     private final ExistingTeacherService existingTeacherService;
-
-
     @PostMapping(value = {"/add-teacher"}, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> addTeacher(@RequestPart("teacher") ExistingTeacher existingTeacher, @RequestPart("imageFile") MultipartFile file) {
         try {
             if (file.isEmpty()) {
                 return ResponseEntity.badRequest().body("Image file is empty.");
             }
-
             String imageUrl = uploadFile(file);
             if (imageUrl == null) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload the image file.");
             }
-
             // Check if the teacherId is unique before creating the teacher
             if (existingTeacherService.getTeacherByTeacherId(existingTeacher.getTeacherId())!=null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("TeacherId already exists.");
             }
-
             existingTeacher.setImageUrl(imageUrl);
             ExistingTeacher addedExistingTeacher = existingTeacherService.addTeacher(existingTeacher);
-
             if (addedExistingTeacher == null) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add teacher.");
             }
-
             return ResponseEntity.ok(addedExistingTeacher);
         } catch (Exception e) {
             // Handle exceptions gracefully and provide an appropriate error response
@@ -61,7 +53,6 @@ public class ExistingTeacherController {
         try {
             // Retrieve the existing teacher from the database
             ExistingTeacher existingTeacher = existingTeacherService.getTeacherById(id);
-
             if (existingTeacher == null) {
                 return ResponseEntity.notFound().build();
             }
@@ -78,11 +69,9 @@ public class ExistingTeacherController {
                 if (updatedExistingTeacher.getName() != null) {
                     existingTeacher.setName(updatedExistingTeacher.getName());
                 }
-
                 if (updatedExistingTeacher.getPosition() != null) {
                     existingTeacher.setPosition(updatedExistingTeacher.getPosition());
                 }
-
                 if (updatedExistingTeacher.getTeacherId() != null) {
                     existingTeacher.setTeacherId(updatedExistingTeacher.getTeacherId());
                 }

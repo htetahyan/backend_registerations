@@ -10,4 +10,6 @@ public interface FileService {
 byte[] downloadFile(String filename);
 String deleteFile(String filename);
 List<String> listAllFiles();
+
+    void deleteDocumentById(Long id);
 }

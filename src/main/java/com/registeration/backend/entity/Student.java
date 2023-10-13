@@ -33,6 +33,8 @@ public class Student {
     private String country;
     private String phoneNumber;
     private String address;
+    @Column(nullable = true)
+    private String verified;
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
